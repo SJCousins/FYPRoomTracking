@@ -20,10 +20,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
             android:padding="5dp"
             android:text="Name"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -31,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:paddingLeft="5dp"
             android:padding="2dp"
             android:text="available2"
             android:textColor="@android:color/black"
@@ -42,11 +44,21 @@
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/available"
-            android:layout_marginTop="46dp"
+            android:layout_below="@+id/name"
+            android:paddingLeft="5dp"
             android:layout_marginEnd="249dp"
-            android:layout_toStartOf="@+id/available"
             android:text="location"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/maxPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/location"
+            android:paddingLeft="5dp"
+            android:layout_marginEnd="249dp"
+            android:text="MaxOccupancy"
             android:textColor="@android:color/black"
             android:textSize="15sp" />
 

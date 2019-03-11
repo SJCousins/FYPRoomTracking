@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,7 +52,8 @@ public class BookingView extends AppCompatActivity {
     ArrayList<String> nameList = new ArrayList<>();
     ArrayList<String> locList = new ArrayList<>();
     ArrayList<String> availList = new ArrayList<>();
-
+    ArrayList<String> maxPeopleList = new ArrayList<>();
+    ArrayList<String> availableAtList = new ArrayList<>();
     String[][] arrStr = new String[3][4];
     ArrayList<exampleItem> roomList = new ArrayList<>();
     String uID, sesToken;
@@ -105,10 +107,22 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
 
                        String name = obj.getString("name");
                         String location = obj.getString("location");
+                        String maxPeople = obj.getString("maxParticipants");
+
+                        String editedName = "";
+                        editedName = name.trim();
 
 
-                        nameList.add(name);
+                        int spacePos = name.indexOf(" ");
+                        if (spacePos > 0) {
+                             editedName = name.substring(0, spacePos);
+                        }
+
+
+                        Log.i("array",obj.toString());
+                        nameList.add(editedName);
                         locList.add(location);
+                        maxPeopleList.add(maxPeople);
 
                     }
                     getAvailability(sessionToken,userIdStr);
@@ -179,28 +193,31 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
 
                         String available = json.getString("available");
                         JSONObject find = json.getJSONObject("resource");
+                       String findAvailableAt = json.getString("availableAt");
 
-                        Log.i("array",available);
+
+                       String editedFindAvailableAt = findAvailableAt.substring(findAvailableAt.indexOf("T")+1);
+                       editedFindAvailableAt.trim();
+
+                       int spacePos = editedFindAvailableAt.indexOf("+");
+                       if (spacePos > 0) {
+                           findAvailableAt = editedFindAvailableAt.substring(0, spacePos);
+                       }
+
+                       Log.i("out", editedFindAvailableAt);
+
+                       availableAtList.add(findAvailableAt);
                         availList.add(available);
                     }
 
                     //JSONObject jsonArr = new JSONObject(result);
 
 
-
-                    for(int i=0; i< nameList.size(); i++) {
-
-                        //JSONObject obj2 = availArray.getJSONObject(i);
-
-                        //boolean available = obj2.getBoolean("available");
-                        //availList.add(Boolean.toString(getRandomBoolean()) );
-
-                    }
                     int len2= availList.size();
 
 
                     for (int i = 0; i < availList.size(); i++) {
-                        roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i)));
+                        roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i)));
                     }
                     int len = roomList.size();
 
