@@ -51,6 +51,8 @@ public class BookingView extends AppCompatActivity {
     ArrayList<String> nameList = new ArrayList<>();
     ArrayList<String> locList = new ArrayList<>();
     ArrayList<String> availList = new ArrayList<>();
+
+    String[][] arrStr = new String[3][4];
     ArrayList<exampleItem> roomList = new ArrayList<>();
     String uID, sesToken;
     static String filters[] = {"Location", "Available"};
@@ -163,17 +165,35 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
             @Override
             public void onResponse(String response) {
                 String result = response.split("exception 'ErrorException'")[0];
+                Log.i("marker","responseback");
+               // Log.i("output",result);
                 try {
                     JSONObject jsnobject = new JSONObject(result);
                      JSONArray availArray = jsnobject.getJSONArray("resources");
+                    Log.i("check","here");
+                    JSONArray availArray2 = availArray.getJSONArray(0);
+
+                    Log.i("check","or here");
+                   for(int i=0;i<availArray2.length();i++){
+                        JSONObject json = availArray2.getJSONObject(i);
+
+                        String available = json.getString("available");
+                        JSONObject find = json.getJSONObject("resource");
+
+                        Log.i("array",available);
+                        availList.add(available);
+                    }
+
+                    //JSONObject jsonArr = new JSONObject(result);
 
 
 
                     for(int i=0; i< nameList.size(); i++) {
 
                         //JSONObject obj2 = availArray.getJSONObject(i);
+
                         //boolean available = obj2.getBoolean("available");
-                        availList.add(Boolean.toString(getRandomBoolean()) );
+                        //availList.add(Boolean.toString(getRandomBoolean()) );
 
                     }
                     int len2= availList.size();

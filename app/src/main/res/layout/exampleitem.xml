@@ -32,10 +32,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:padding="2dp"
-            android:text="available"
+            android:text="available2"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            />
 
         <TextView
             android:id="@+id/location"

@@ -17,7 +17,7 @@ public class exampleItem {
             roomavailable = "available";
         }
         else    {
-            roomavailable = "unavaiable";
+            roomavailable = "unavailable";
         }
 
     }
@@ -27,8 +27,6 @@ public class exampleItem {
     public String getName() {
         return roomname;
     }
-
-
     public String getLocation() {
         return roomlocation;
     }

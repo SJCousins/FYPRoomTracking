@@ -15,13 +15,14 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.exampl
     public static class exampleViewHolder extends  RecyclerView.ViewHolder{
         public TextView name;
         public TextView location;
+        public  TextView available;
 
 
         public exampleViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             location = itemView.findViewById(R.id.location);
-
+            available = itemView.findViewById(R.id.available);
 
         }
     }
@@ -44,6 +45,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.exampl
 
         exampleViewHolder.name.setText(current.getName());
         exampleViewHolder.location.setText(current.getLocation());
+        exampleViewHolder.available.setText(current.getAvailable());
     }
 
     @Override
