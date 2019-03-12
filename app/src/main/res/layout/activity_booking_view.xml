@@ -38,7 +38,7 @@
         android:background="#625d8e"
 app:layout_constraintTop_toBottomOf="@id/recyclerView"
         android:clickable="true"
-        android:onClick="filterClick"
+
         android:text="Filters"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"

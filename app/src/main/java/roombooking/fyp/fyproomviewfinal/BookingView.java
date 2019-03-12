@@ -1,5 +1,6 @@
 package roombooking.fyp.fyproomviewfinal;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -13,8 +14,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,9 +61,11 @@ public class BookingView extends AppCompatActivity {
     ArrayList<String> availableAtList = new ArrayList<>();
     String[][] arrStr = new String[3][4];
     ArrayList<exampleItem> roomList = new ArrayList<>();
+    ArrayList<String> selectedFilters = new ArrayList<>();
     String uID, sesToken;
-    static String filters[] = {"Location", "Available"};
-    static ArrayList<String> selectedFilters = new ArrayList();
+
+
+
     static String locations[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +73,24 @@ public class BookingView extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_view);
+        getRooms();
+
+
+        filterButton = (Button) findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFilters();
+            }
+        });
 
 
 
 
+    }
 
-filterButton = (Button)findViewById(R.id.filterButton) ;
+
+    public void getRooms(){
 
         mRecyclerView = findViewById(R.id.recyclerView);
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -81,7 +100,7 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
         uID = userIdStr;
         sesToken = sessionToken;
 
-        // String concat = preferences.getString("sessionToken", "") + "   " +  preferences.getInt("userId",0);
+
 
 
         RequestQueue rq = Volley.newRequestQueue(this);
@@ -103,9 +122,9 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
 
                     for(int i=0; i<jsonArray.length(); i++){
 
-                       JSONObject obj = jsonArray.getJSONObject(i);
+                        JSONObject obj = jsonArray.getJSONObject(i);
 
-                       String name = obj.getString("name");
+                        String name = obj.getString("name");
                         String location = obj.getString("location");
                         String maxPeople = obj.getString("maxParticipants");
 
@@ -115,11 +134,11 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
 
                         int spacePos = name.indexOf(" ");
                         if (spacePos > 0) {
-                             editedName = name.substring(0, spacePos);
+                            editedName = name.substring(0, spacePos);
                         }
 
 
-                        Log.i("array",obj.toString());
+
                         nameList.add(editedName);
                         locList.add(location);
                         maxPeopleList.add(maxPeople);
@@ -164,6 +183,7 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
         };
 
         rq.add(postReq);
+
     }
 
 
@@ -179,57 +199,39 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
             @Override
             public void onResponse(String response) {
                 String result = response.split("exception 'ErrorException'")[0];
-                Log.i("marker","responseback");
-               // Log.i("output",result);
+
                 try {
                     JSONObject jsnobject = new JSONObject(result);
-                     JSONArray availArray = jsnobject.getJSONArray("resources");
-                    Log.i("check","here");
+                    JSONArray availArray = jsnobject.getJSONArray("resources");
+
                     JSONArray availArray2 = availArray.getJSONArray(0);
 
-                    Log.i("check","or here");
-                   for(int i=0;i<availArray2.length();i++){
+Log.i("arr2 length",Integer.toString(availArray2.length()));
+                    for(int i=0;i<availArray2.length();i++){
                         JSONObject json = availArray2.getJSONObject(i);
 
                         String available = json.getString("available");
-                        JSONObject find = json.getJSONObject("resource");
-                       String findAvailableAt = json.getString("availableAt");
+
+                        String findAvailableAt = json.getString("availableAt");
 
 
-                       String editedFindAvailableAt = findAvailableAt.substring(findAvailableAt.indexOf("T")+1);
-                       editedFindAvailableAt.trim();
+                        String editedFindAvailableAt = findAvailableAt.substring(findAvailableAt.indexOf("T")+1);
+                        editedFindAvailableAt.trim();
 
-                       int spacePos = editedFindAvailableAt.indexOf("+");
-                       if (spacePos > 0) {
-                           findAvailableAt = editedFindAvailableAt.substring(0, spacePos);
-                       }
+                        int spacePos = editedFindAvailableAt.indexOf("+");
+                        if (spacePos > 0) {
+                            findAvailableAt = editedFindAvailableAt.substring(0, spacePos);
+                        }
 
-                       Log.i("out", editedFindAvailableAt);
 
-                       availableAtList.add(findAvailableAt);
+                        availableAtList.add(findAvailableAt);
+
                         availList.add(available);
                     }
-
-                    //JSONObject jsonArr = new JSONObject(result);
-
-
-                    int len2= availList.size();
-
-
-                    for (int i = 0; i < availList.size(); i++) {
-                        roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i)));
-                    }
-                    int len = roomList.size();
-
-                    mRecyclerView = findViewById(R.id.recyclerView);
-                    mRecyclerView.setHasFixedSize(true);
-                    mLayoutManager = new LinearLayoutManager(BookingView.this);
-                    mAdapter = new recyclerAdapter(roomList);
-
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setAdapter(mAdapter);
-
-
+                    roomList.clear();
+                    selectedFilters.add("Available");
+                    selectedFilters.add("Unavailable");
+                    populateRecyclerView();
 
                 }
                 catch(JSONException e)
@@ -251,7 +253,6 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
                 headers.put("X-Booked-SessionToken",sesToken );
                 headers.put("X-Booked-UserId", uID);
                 return headers;
@@ -267,97 +268,109 @@ filterButton = (Button)findViewById(R.id.filterButton) ;
     }
 
 
-    public static boolean getRandomBoolean() {
-        return Math.random() < 0.5;
 
+
+
+    public Set<String> getUniqueMaxOccupancy(){
+        Set<String> uniqueMaxOcc= new HashSet<String>(maxPeopleList);
+
+        return uniqueMaxOcc;
     }
 
 
-   /* public void filterClick(View view) {
-        filterButton.setBackgroundColor(Color.RED);
 
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.filterdialog);
-        dialog.setTitle("Title...");
-        final Spinner locSpin = (Spinner) findViewById(R.id.locationSpinner);
-        // set the custom dialog components - text, image and button
+    public Set<String> getUniqueLocations(){
+        Set<String> uniqueLoc= new HashSet<String>(locList);
+
+        return uniqueLoc;
+    }
 
 
-
-        addLocationsToSpinner();
-        TextView text = (TextView) dialog.findViewById(R.id.text);
-        text.setText("Android custom dialog example!");
+    public ArrayList<String> populateFilters(){
 
 
-        Log.i("marker", "before ok");
-        Button okButton = (Button) dialog.findViewById(R.id.ok);
-        // if button is clicked, close the custom dialog
+        ArrayList<String> filters = new ArrayList<>();
 
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int userChoice =locSpin.getSelectedItemPosition();
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        filters.add("Available");
+        filters.add("Unavailable");
+filters.addAll(getUniqueLocations());
+filters.addAll(getUniqueMaxOccupancy());
+        return filters;
+    }
 
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt("locChoice",userChoice);
-                editor.apply();
-                dialog.dismiss();
+
+
+public void openFilters() {
+
+
+    ArrayList<String> filters = new ArrayList<>();
+filters = populateFilters();
+
+    String[] filtersArray = new String[filters.size()];
+    filtersArray = filters.toArray(filtersArray);
+
+    final String[] filtersArray2 = filtersArray;
+    int  length = filters.size();
+
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Choose items");
+
+    final boolean[] checkedItems = new boolean[length];
+
+    builder.setMultiChoiceItems(filtersArray, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+            if (isChecked) {
+                selectedFilters.add(filtersArray2[which]);
+            } else if (selectedFilters.contains(filtersArray2[which])) {
+                selectedFilters.remove(filtersArray2[which]);
             }
-        });
+        }
+    });
 
-        Log.i("marker", "before cancel");
-        Button cancelButton = (Button) dialog.findViewById(R.id.cancel);
-        // if button is clicked, close the custom dialog
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            roomList.clear();
+           populateRecyclerView();
+            dialog.dismiss();
 
-                dialog.dismiss();
-            }
-        });
+        }
+    });
+
+    AlertDialog dialog = builder.create();
+    dialog.show();
+}
 
 
-        dialog.show();
-        Log.i("marker", "showed");
+public void populateRecyclerView(){
+
+
+    Collections.replaceAll(availList, "true", "Available");
+    Collections.replaceAll(availList, "false", "Unavailable");
+
+
+    for (int i = 0; i < availList.size(); i++) {
+
+
+            if (selectedFilters.contains(locList.get(i)) || selectedFilters.contains(maxPeopleList.get(i))|| selectedFilters.contains(availList.get(i))){
+                roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i)));
+}
     }
 
 
+    mRecyclerView = findViewById(R.id.recyclerView);
+    mRecyclerView.setHasFixedSize(true);
+    mLayoutManager = new LinearLayoutManager(BookingView.this);
+    mAdapter = new recyclerAdapter(roomList);
 
+    mRecyclerView.setLayoutManager(mLayoutManager);
+    mRecyclerView.setAdapter(mAdapter);
 
-    public void findClick() {
-        // Do something in response to button click
-    }
-
-    public void addLocationsToSpinner() {
-
-        Spinner locSpin = (Spinner) findViewById(R.id.locationSpinner);
-        ArrayList<String> locArr = new ArrayList<String>();
-        Set<String> uniqueLoc = new HashSet<String>(locList);
-        locArr.addAll(uniqueLoc);
-        Log.i("marker",Integer.toString(locArr.size()));
-
-
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, locArr);
-        Log.i("marker","got here");
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Log.i("marker","or here");
-        locSpin.setAdapter(dataAdapter);
-        Log.i("marker","maybe here");
-    }
-*/
-
-
-
-
-
-
-
-
-
-
-
-
+    selectedFilters.clear();
+}
 
 }
 

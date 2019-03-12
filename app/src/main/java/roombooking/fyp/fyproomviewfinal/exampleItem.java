@@ -16,11 +16,11 @@ public class exampleItem {
         roomname = name;
         roomlocation = "Location: " + location;
 
-        if (available == "true"){
-            roomavailable = "available";
+        if (available == "Available"){
+            roomavailable = "Available";
         }
         else    {
-            roomavailable = "Next Available At: " + availableAt;
+            roomavailable = "Booked Until: " + availableAt;
         }
         maxOccupancy = "Max Occupancy: " + maxPeople;
 

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:layout_centerInParent="true"
+    android:background="@android:color/white">
+
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose Filters"
+        android:textAlignment="center"
+        android:textColor="#424242"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/availabilityTitle"
+        android:layout_width="fill_parent"
+        android:paddingTop="15dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleText"
+        android:text="Availability"
+        android:textAlignment="center"
+        android:textColor="#424242"
+        android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/availableCheck"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/availabilityTitle"
+        android:layout_centerHorizontal="true"
+        android:buttonTint="#424242"
+        android:text="Available"
+        android:textColor="#424242" />
+    <CheckBox
+        android:id="@+id/unavailableCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/availableCheck"
+        android:buttonTint="#424242"
+        android:text="Unavailable"
+        android:layout_centerHorizontal="true"
+        android:textColor="#424242" />
+
+
+
+
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:background="#625d8e"
+
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="1"
+        android:background="#625d8e"
+
+        android:text="Confirm" />
+
+
+</RelativeLayout>
