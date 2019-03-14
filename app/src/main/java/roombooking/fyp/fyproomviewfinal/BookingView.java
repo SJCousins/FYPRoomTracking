@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class BookingView extends AppCompatActivity {
@@ -64,6 +65,7 @@ public class BookingView extends AppCompatActivity {
     ArrayList<String> selectedFilters = new ArrayList<>();
     String uID, sesToken;
 
+    private Random rand = new Random();
 
 
     static String locations[];
@@ -75,6 +77,14 @@ public class BookingView extends AppCompatActivity {
         setContentView(R.layout.activity_booking_view);
         getRooms();
 
+
+        findButton = (Button) findViewById(R.id.findRoomButton);
+        findButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFindRoom();
+            }
+        });
 
         filterButton = (Button) findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +98,6 @@ public class BookingView extends AppCompatActivity {
 
 
     }
-
 
     public void getRooms(){
 
@@ -186,7 +195,6 @@ public class BookingView extends AppCompatActivity {
 
     }
 
-
     public void getAvailability(final String Token, final String ID){
         RequestQueue rq = Volley.newRequestQueue(this);
 
@@ -206,7 +214,7 @@ public class BookingView extends AppCompatActivity {
 
                     JSONArray availArray2 = availArray.getJSONArray(0);
 
-Log.i("arr2 length",Integer.toString(availArray2.length()));
+
                     for(int i=0;i<availArray2.length();i++){
                         JSONObject json = availArray2.getJSONObject(i);
 
@@ -267,17 +275,11 @@ Log.i("arr2 length",Integer.toString(availArray2.length()));
 
     }
 
-
-
-
-
     public Set<String> getUniqueMaxOccupancy(){
         Set<String> uniqueMaxOcc= new HashSet<String>(maxPeopleList);
 
         return uniqueMaxOcc;
     }
-
-
 
     public Set<String> getUniqueLocations(){
         Set<String> uniqueLoc= new HashSet<String>(locList);
@@ -285,40 +287,56 @@ Log.i("arr2 length",Integer.toString(availArray2.length()));
         return uniqueLoc;
     }
 
-
     public ArrayList<String> populateFilters(){
-
 
         ArrayList<String> filters = new ArrayList<>();
 
         filters.add("Available");
         filters.add("Unavailable");
-filters.addAll(getUniqueLocations());
-filters.addAll(getUniqueMaxOccupancy());
+        filters.addAll(getUniqueLocations());
+        filters.addAll(getUniqueMaxOccupancy());
         return filters;
     }
 
+    public void openFindRoom() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Room Found");
+
+        exampleItem chosenRoom =   roomList.get(rand.nextInt(roomList.size()));
+
+        builder.setMessage(chosenRoom.getName() + "\n" + chosenRoom.getLocation());
+
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public void openFilters() {
+
+        ArrayList<String> filters = new ArrayList<>();
+        filters = populateFilters();
+
+        String[] filtersArray = new String[filters.size()];
+        filtersArray = filters.toArray(filtersArray);
+
+        final String[] filtersArray2 = filtersArray;
+        int  length = filters.size();
 
 
-public void openFilters() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose filters");
 
+        final boolean[] checkedItems = new boolean[length];
 
-    ArrayList<String> filters = new ArrayList<>();
-filters = populateFilters();
-
-    String[] filtersArray = new String[filters.size()];
-    filtersArray = filters.toArray(filtersArray);
-
-    final String[] filtersArray2 = filtersArray;
-    int  length = filters.size();
-
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle("Choose items");
-
-    final boolean[] checkedItems = new boolean[length];
-
-    builder.setMultiChoiceItems(filtersArray, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+        builder.setMultiChoiceItems(filtersArray, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 
@@ -351,9 +369,7 @@ public void populateRecyclerView(){
     Collections.replaceAll(availList, "true", "Available");
     Collections.replaceAll(availList, "false", "Unavailable");
 
-
     for (int i = 0; i < availList.size(); i++) {
-
 
             if (selectedFilters.contains(locList.get(i)) || selectedFilters.contains(maxPeopleList.get(i))|| selectedFilters.contains(availList.get(i))){
                 roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i)));
