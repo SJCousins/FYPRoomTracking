@@ -56,7 +56,7 @@ public class BookingView extends AppCompatActivity {
 
     TextView t1, countView;
     private RecyclerView mRecyclerView;
-    Button filterButton, findButton;
+    Button filterButton, findButton, refreshButton;
 
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -81,7 +81,8 @@ private int delay = 30000;
     protected void onCreate(Bundle savedInstanceState) {
 
 defaultFilters.add("Available");
-
+selectedFilters.add("Available");
+selectedFilters.add("Booked");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_view);
         getRooms();
@@ -89,8 +90,16 @@ defaultFilters.add("Available");
         countView = (TextView) findViewById(R.id.countTimer);
 
 
-        handler.postDelayed(runnable, delay);
 
+
+
+        refreshButton = (Button) findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refreshList();
+            }
+        });
 
         findButton = (Button) findViewById(R.id.findRoomButton);
         findButton.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +141,7 @@ defaultFilters.add("Available");
            getRooms();
             count = count - 1;
 
-            handler.postDelayed(this, delay);
+            //handler.postDelayed(this, delay);
         }
     };
     public void SQLGet() {
@@ -409,7 +418,7 @@ SQLGet();
         ArrayList<String> filters = new ArrayList<>();
 
         filters.add("Available");
-        filters.add("Unavailable");
+        filters.add("Booked");
         filters.addAll(getUniqueLocations());
         filters.addAll(getUniqueMaxOccupancy());
         return filters;
@@ -436,8 +445,14 @@ SQLGet();
 
     }
 
-    public void openFilters() {
+    public void refreshList() {
 
+
+        handler.postDelayed(runnable, 0);
+    }
+
+    public void openFilters() {
+selectedFilters.clear();
         ArrayList<String> filters = new ArrayList<>();
         filters = populateFilters();
 
@@ -457,7 +472,7 @@ SQLGet();
         @Override
         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 
-            if (isChecked) {
+            if (isChecked && !selectedFilters.contains(filtersArray2[which])) {
                 selectedFilters.add(filtersArray2[which]);
             } else if (selectedFilters.contains(filtersArray2[which])) {
                 selectedFilters.remove(filtersArray2[which]);
@@ -484,7 +499,9 @@ public void populateRecyclerView(){
 
 
     Collections.replaceAll(availList, "true", "Available");
-    Collections.replaceAll(availList, "false", "Unavailable");
+    Collections.replaceAll(availList, "false", "Booked");
+    Collections.replaceAll(liveAvail, "0", "Currently Empty");
+    Collections.replaceAll(liveAvail, "1", "Currently In Use");
 
     Log.e("loc",Integer.toString(selectedFilters.size()));
     Log.e("loc", selectedFilters.toString());
@@ -522,7 +539,7 @@ else{
     mRecyclerView.setLayoutManager(mLayoutManager);
     mRecyclerView.setAdapter(mAdapter);
 
-    selectedFilters.clear();
+
 }
 
 }

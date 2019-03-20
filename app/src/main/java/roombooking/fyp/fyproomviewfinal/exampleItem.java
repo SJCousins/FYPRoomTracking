@@ -26,13 +26,7 @@ public class exampleItem {
         maxOccupancy = "Max Occupancy: " + maxPeople;
 
 liveAvail = live;
-        //if (live == "0"){
-          //  liveAvail = "Currently Empty";
-        //}
-       // else
-       // {
-          //  liveAvail = "Currently In use";
-        //}
+
 
 
 
