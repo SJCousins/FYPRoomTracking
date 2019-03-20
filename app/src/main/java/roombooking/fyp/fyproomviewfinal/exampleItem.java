@@ -10,8 +10,9 @@ public class exampleItem {
     private String roomlocation;
     private String roomavailable;
     private String maxOccupancy;
+    private String liveAvail;
 
-    public exampleItem(String name, String location, String available, String maxPeople, String availableAt) {
+    public exampleItem(String name, String location, String available, String maxPeople, String availableAt,String live) {
 
         roomname = name;
         roomlocation = "Location: " + location;
@@ -23,6 +24,17 @@ public class exampleItem {
             roomavailable = "Booked Until: " + availableAt;
         }
         maxOccupancy = "Max Occupancy: " + maxPeople;
+
+liveAvail = live;
+        //if (live == "0"){
+          //  liveAvail = "Currently Empty";
+        //}
+       // else
+       // {
+          //  liveAvail = "Currently In use";
+        //}
+
+
 
     }
 
@@ -39,5 +51,8 @@ public class exampleItem {
     }
     public String getMaxOccupancy() {
         return maxOccupancy;
+    }
+    public String getLiveAvail() {
+        return liveAvail;
     }
 }

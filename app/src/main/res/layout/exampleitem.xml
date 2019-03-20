@@ -41,6 +41,20 @@
             />
 
         <TextView
+            android:id="@+id/live"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:paddingLeft="5dp"
+            android:padding="2dp"
+            android:text="live"
+            android:layout_below="@id/available"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
             android:id="@+id/location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

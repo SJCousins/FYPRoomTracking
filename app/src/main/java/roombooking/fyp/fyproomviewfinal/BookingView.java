@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -46,10 +48,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.sql.*;
 
 public class BookingView extends AppCompatActivity {
 
-    TextView t1;
+    TextView t1, countView;
     private RecyclerView mRecyclerView;
     Button filterButton, findButton;
 
@@ -60,22 +65,31 @@ public class BookingView extends AppCompatActivity {
     ArrayList<String> availList = new ArrayList<>();
     ArrayList<String> maxPeopleList = new ArrayList<>();
     ArrayList<String> availableAtList = new ArrayList<>();
+    ArrayList<String> liveAvail = new ArrayList<>();
     String[][] arrStr = new String[3][4];
     ArrayList<exampleItem> roomList = new ArrayList<>();
     ArrayList<String> selectedFilters = new ArrayList<>();
+    ArrayList<String> defaultFilters = new ArrayList<>();
     String uID, sesToken;
-
+    private Handler handler = new Handler();
     private Random rand = new Random();
-
+private int count = 30;
+private int delay = 30000;
 
     static String locations[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+defaultFilters.add("Available");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_view);
         getRooms();
+
+        countView = (TextView) findViewById(R.id.countTimer);
+
+
+        handler.postDelayed(runnable, delay);
 
 
         findButton = (Button) findViewById(R.id.findRoomButton);
@@ -98,6 +112,110 @@ public class BookingView extends AppCompatActivity {
 
 
     }
+
+
+
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+
+            roomList.clear();
+
+            nameList.clear();
+            locList.clear();
+            availableAtList.clear();
+            availList.clear();
+            liveAvail.clear();
+
+
+           getRooms();
+            count = count - 1;
+
+            handler.postDelayed(this, delay);
+        }
+    };
+    public void SQLGet() {
+
+        Random rand = new Random();
+
+        rand.setSeed(System.currentTimeMillis());
+
+
+
+
+liveAvail.clear();
+           try {
+
+               RequestQueue rq = Volley.newRequestQueue(this);
+
+               StringRequest postReq = new StringRequest(Request.Method.GET, "http://3.18.62.161/Output.php?unused=" + rand.nextInt(), new Response.Listener<String>() {
+
+
+
+
+
+
+                   @Override
+                   public void onResponse(String response) {
+                       String result = response.split("exception 'ErrorException'")[0];
+
+
+
+
+                           try{
+                               JSONArray jsonArr = new JSONArray(result);
+                               for (int i = 0; i < jsonArr.length(); i++)
+                               {
+                                   JSONObject jsonObj = jsonArr.getJSONObject(i);
+                                   //Log.e("loc", jsonObj.getString(("avail")));
+                                   liveAvail.add(jsonObj.getString("avail"));
+
+                               }
+
+                               populateRecyclerView();
+
+                           }
+                           catch (JSONException e){
+                               Log.e("mark", "json error",  e);
+                           }
+
+
+
+
+
+
+                   }
+               }, new Response.ErrorListener() {
+
+                   @Override
+
+                   public void onErrorResponse(VolleyError error) {
+
+
+                   }
+               }) {
+
+
+               };
+
+               rq.add(postReq);
+
+
+           }
+
+               //URL url = new URL("http://3.18.62.161/Output.php")
+
+           catch(Exception e) {
+
+           }
+
+
+    }
+
+
+
+
 
     public void getRooms(){
 
@@ -237,9 +355,8 @@ public class BookingView extends AppCompatActivity {
                         availList.add(available);
                     }
                     roomList.clear();
-                    selectedFilters.add("Available");
-                    selectedFilters.add("Unavailable");
-                    populateRecyclerView();
+
+
 
                 }
                 catch(JSONException e)
@@ -269,7 +386,7 @@ public class BookingView extends AppCompatActivity {
 
 
 
-
+SQLGet();
 
         rq.add(postReq);
 
@@ -369,12 +486,32 @@ public void populateRecyclerView(){
     Collections.replaceAll(availList, "true", "Available");
     Collections.replaceAll(availList, "false", "Unavailable");
 
+    Log.e("loc",Integer.toString(selectedFilters.size()));
+    Log.e("loc", selectedFilters.toString());
+if (selectedFilters.size() == 0){
+    for (int i = 0; i < availList.size(); i++) {
+            roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i), liveAvail.get(i)));
+    }
+}
+else{
     for (int i = 0; i < availList.size(); i++) {
 
-            if (selectedFilters.contains(locList.get(i)) || selectedFilters.contains(maxPeopleList.get(i))|| selectedFilters.contains(availList.get(i))){
-                roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i)));
-}
+        if (selectedFilters.contains(locList.get(i)) || selectedFilters.contains(maxPeopleList.get(i))|| selectedFilters.contains(availList.get(i))){
+
+
+            roomList.add(new exampleItem(nameList.get(i), locList.get(i), availList.get(i), maxPeopleList.get(i), availableAtList.get(i), liveAvail.get(i)));
+
+
+
+        }
     }
+}
+
+
+
+
+
+
 
 
     mRecyclerView = findViewById(R.id.recyclerView);

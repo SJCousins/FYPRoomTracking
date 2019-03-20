@@ -17,6 +17,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.exampl
         public TextView location;
         public  TextView available;
         public  TextView maxPeople;
+        public TextView live;
 
 
         public exampleViewHolder(@NonNull View itemView) {
@@ -25,7 +26,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.exampl
             location = itemView.findViewById(R.id.location);
             available = itemView.findViewById(R.id.available);
             maxPeople = itemView.findViewById(R.id.maxPeople);
-
+live = itemView.findViewById(R.id.live);
         }
     }
 
@@ -49,6 +50,7 @@ public class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.exampl
         exampleViewHolder.location.setText(current.getLocation());
         exampleViewHolder.available.setText(current.getAvailable());
         exampleViewHolder.maxPeople.setText(current.getMaxOccupancy());
+        exampleViewHolder.live.setText(current.getLiveAvail());
     }
 
     @Override
