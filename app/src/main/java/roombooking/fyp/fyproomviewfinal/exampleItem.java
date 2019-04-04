@@ -25,15 +25,10 @@ public class exampleItem {
         }
         maxOccupancy = "Max Occupancy: " + maxPeople;
 
-liveAvail = live;
-
-
-
+        liveAvail = live;
 
     }
-
-
-
+    //getters
     public String getName() {
         return roomname;
     }
